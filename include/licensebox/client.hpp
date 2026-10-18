@@ -136,6 +136,12 @@ public:
     return call(
         [&](char **out) { return lb_require(handle_, module.c_str(), out); });
   }
+  // Explicit synchronous checkpoint; scheduling belongs to the application.
+  std::string heartbeat(const std::string &module) {
+    if (module.empty() || module.find('\0') != std::string::npos)
+      throw Error(LB_INVALID_ARGUMENT, "invalid_argument", "module required");
+    return call([&](char **out) { return lb_heartbeat(handle_, module.c_str(), out); });
+  }
   std::string status() {
     return call([&](char **out) { return lb_status(handle_, out); });
   }

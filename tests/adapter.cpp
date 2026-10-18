@@ -77,7 +77,12 @@ int main() {
       else if (op == "require")
         output = client.require(text(o, "module").empty() ? "core"
                                                           : text(o, "module"));
-      else if (op == "repeat") {
+      else if (op == "heartbeat" || op == "heartbeat-repeat" || op == "heartbeat-after-require") {
+        auto module = text(o, "module").empty() ? "core" : text(o, "module");
+        if (op == "heartbeat-after-require") client.require("core");
+        output = client.heartbeat(module);
+        if (op == "heartbeat-repeat") output = client.heartbeat(module);
+      } else if (op == "repeat") {
         client.require("core");
         output = client.require("core");
       } else if (op == "status")
