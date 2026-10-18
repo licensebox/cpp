@@ -1,0 +1,1 @@
+set(LICENSEBOX_C_VERSION "v0.1.0")
