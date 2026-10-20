@@ -5,7 +5,7 @@ Machine identity, signature verification, storage and policy handling have one
 implementation. Linux is supported and runtime-validated; other OS adapters are
 pending in the C implementation.
 
-Install the C SDK's dependencies (OpenSSL 3, libcurl 7.85+, json-c), then:
+Install the C SDK's dependencies (OpenSSL 3.5+, the first with ML-DSA; libcurl 7.85+; json-c), then:
 
 ```sh
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
