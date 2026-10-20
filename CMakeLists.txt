@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-project(licensebox_cpp VERSION 0.2.0 LANGUAGES C CXX)
+project(licensebox_cpp VERSION 0.3.0 LANGUAGES C CXX)
 include(c-version.cmake)
 include(cmake/NativeCandidate.cmake)
 include(CTest)
