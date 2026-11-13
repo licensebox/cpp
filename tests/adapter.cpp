@@ -63,6 +63,7 @@ int main() {
       config.product = text(o, "product");
       config.server = text(o, "server");
       config.directory = text(o, "directory");
+      config.enrol_token = text(o, "enrol_token");
       config.version = "conformance";
       for (std::size_t i = 0; i < count; i++)
         config.keys.emplace(keys[i].id, keys[i].public_key);
@@ -99,6 +100,12 @@ int main() {
         output = client.request_access({"export"}, "café – test");
       else if (op == "access-link")
         value.reset(json_object_new_string(client.access_link().c_str()));
+      else if (op == "enrol")
+        output = client.enrol(text(o, "token"));
+      else if (op == "checkout")
+        output = client.checkout(text(o, "module"));
+      else if (op == "checkin")
+        client.checkin({text(o, "module")});
       else if (op == "record") {
         client.record("export", true, .125);
         client.record("export", false, .025);

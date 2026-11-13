@@ -24,6 +24,9 @@ struct Config {
   std::string product;
   std::map<std::string, std::string> keys;
   std::string version, server, directory;
+  // A service account's one-time enrolment token; empty reads
+  // LICENSEBOX_ENROL_TOKEN. With one, the first lease enrols the machine.
+  std::string enrol_token;
   std::function<void(const std::string &, const std::string &)> on_sign_in;
   std::function<double()> clock;
   // Platform/test seam; never supply an identity from the end user.
@@ -111,6 +114,8 @@ public:
     options.server = config_.server.empty() ? nullptr : config_.server.c_str();
     options.directory =
         config_.directory.empty() ? nullptr : config_.directory.c_str();
+    options.enrol_token =
+        config_.enrol_token.empty() ? nullptr : config_.enrol_token.c_str();
     options.context = this;
     options.cancelled = cancelled;
     if (config_.on_sign_in)
@@ -171,6 +176,23 @@ public:
       return lb_request_access(handle_, names.data(), names.size(),
                                note.c_str(), out);
     });
+  }
+  // Service accounts and floating copies. require checks a floating module
+  // out by itself; checkin with no names returns every copy.
+  std::string enrol(const std::string &token) {
+    return call(
+        [&](char **out) { return lb_enrol(handle_, token.c_str(), out); });
+  }
+  std::string checkout(const std::string &module) {
+    return call(
+        [&](char **out) { return lb_checkout(handle_, module.c_str(), out); });
+  }
+  void checkin(const std::vector<std::string> &modules = {}) {
+    std::vector<const char *> names;
+    for (const auto &name : modules)
+      names.push_back(name.c_str());
+    std::lock_guard<std::mutex> lock(mutex_);
+    checked(lb_checkin(handle_, names.data(), names.size()), nullptr);
   }
   void record(const std::string &command, bool success,
               double elapsed_seconds) {
